@@ -1,0 +1,121 @@
+#define wiwihorz
+#include <bits/stdc++.h>
+#pragma GCC optimize("Ofast")
+#pragma GCC target("sse")
+#pragma loop-opt(on)
+
+#define rep(i, a, b) for(int i = a; i <= b; i++)
+#define rrep(i, a, b) for(int i = b; i >= a; i--)
+#define ceil(a, b) ((a + b - 1) / (b))
+#define all(a) a.begin(), a.end()
+
+using namespace std;
+
+#define INF 1000000000000000000
+#define MOD 1000000007
+#define eps (1e-9)
+#define int long long int
+#define lld long double
+#define pii pair<int, int>
+#define random mt19937 rnd(chrono::steady_clock::now().time_since_epoch().count)
+
+#ifdef wiwihorz
+#define print(a...) cerr << "Line " << __LINE__, kout("[" + string(#a) + "] = ", a)
+void vprint(auto L, auto R) { while(L < R) cerr << *L << " \n"[next(L) == R], ++L;}
+void kout() { cerr << endl; }
+template<class T1, class ... T2>void kout(T1 a, T2 ... e){cerr<<a<<" ",kout(e...);}
+#else 
+#define print(...) 0
+#define vprint(...) 0
+#endif
+struct BIT {
+	int n;
+	vector<int> v;
+	vector<pii> ops;
+	void init_(int _n) {
+		n = _n;
+		ops.clear();
+		v.assign(n + 1, 0);
+	}
+	int lowbit(int x) {
+		return x & (-x);
+	}
+	void modify(int x, int val, int yes) {
+		if(yes) ops.push_back({x, val});
+		for(int i = x; i <= n; i += lowbit(i)) {
+			v[i] += val;
+		}
+	}
+	int query(int x) {
+		int ans = 0;
+		for(int i = x; i > 0; i -= lowbit(i)) {
+			ans += v[i];
+		}
+		return ans;
+	}
+	void undo() {
+		while(ops.size()) {
+			pii p = ops.back(); 
+			ops.pop_back();
+			modify(p.first, -p.second, 0);
+		}
+	}
+};
+namespace solver {
+	int n;
+	const int P = 1000000;
+	vector<int> a, yes, s, v;
+	BIT bit; 
+	void init_(int _n) {
+		n = _n;
+		a.assign(n + 1, 0);
+		yes.assign(n + 1, 0);
+		v.clear();
+		s.clear();
+		bit.undo();
+	}
+	void solve() {
+		int cur = 0, best = 0;
+		rep(i, 1, n) {
+			if(a[i] > best) {
+				best = a[i];
+				yes[i] = ++cur;
+				v.push_back(i);
+			}
+		}
+		int ans = cur;
+		rrep(i, 1, n) {
+			print(i, yes[i]);
+			if(yes[i] > 1) {
+				int pre = v[yes[i] - 2];
+				print(pre, a[pre]);
+				int val = bit.query(P) - bit.query(a[pre]);
+				ans = max(ans, yes[i] - 1 + val);
+			}
+			while(s.size() && a[s.back()] <= a[i]) {
+				int cur = s.back(); s.pop_back();
+				bit.modify(a[cur], -1, 1);
+			}
+			print("here");
+			s.push_back(i);
+			bit.modify(a[i], 1, 1);
+		}
+		cout << ans << "\n";
+	}
+	
+};
+using namespace solver;
+signed main() {
+	ios::sync_with_stdio(false), cin.tie(0);
+	BIT bit; bit.init_(1000000);
+	int t; cin >> t;
+	while(t--) {
+		int n;
+		cin >> n; init_(n);
+		rep(i, 1, n) cin >> a[i];
+		solve();
+	}
+	return 0;
+}
+
+

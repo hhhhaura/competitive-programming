@@ -1,0 +1,42 @@
+#define wiwihorz
+#include "perm.h"
+#include <bits/stdc++.h>
+#pragma GCC optimize("Ofast")
+#pragma GCC target("sse")
+#pragma loop-opt(on)
+#define rep(i, a, b) for(int i = a; i <= b; i ++)
+#define rrep(i, a, b) for(int i = b; i >= a; i --)
+#define all(x) x.begin(), x.end()
+#define ceil(a, b) ((a + b - 1) / (b))
+#define ll long long int
+#define lld long double
+#define pii pair<int, int>
+#define random mt19937 rnd(chrono::steady_clock::now().time_since_epoch().count())
+#define INF 1000000000000000000
+#define MOD 1000000007
+#define eps (1e-9)
+using namespace std;
+#ifdef wiwihorz
+#define print(a...)cerr<<"Line "<<__LINE__<<":",kout("["+string(#a)+"] = ", a)
+void vprint(auto L,auto R){while(L<R)cerr<<*L<<" \n"[next(L) == R], ++L; }
+void kout() { cerr << endl; }
+template<class T1,class ... T2>void kout(T1 a,T2 ... e){cerr<<a<<" ",kout(e...);}
+#else
+#define print(...) 0
+#define vprint(...) 0
+#endif
+#define x first
+#define y second
+const int P = 62;
+vector<int> construct_permutation(ll k) {
+	vector<int> ans;
+	int cnt = -1 + (k & 1), cur = 0;	
+	rrep(i, 1, P) if((k >> i) & 1) {
+		rrep(j, cur, cur + i - 1) ans.push_back(j);
+		cur += i, cnt++;
+	}
+	rep(i, cur, cur + cnt - 1) ans.push_back(i);
+	reverse(all(ans));
+	return ans;
+}
+
